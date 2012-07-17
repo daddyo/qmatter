@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		
+		<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+		<script type="text/javascript">
+			google.load("gdata", "1.x");
+		</script>
+		
+	</head>
+
+	<body>
+		<h3>Before script within HTML body</h3>
+	
+		<script type="text/javascript">
+	// Google Finance Portfolio Data API Example: Retrieve all Portfolios
+
+var financeService =
+  new google.gdata.finance.FinanceService('GoogleInc-financejsguide-1.0');
+
+// This callback will run when the portfolio query is complete
+var portfolioFeedCallback = function(result) {
+  
+  // An array with all of the user's portfolios
+  var entries = result.feed.entry;
+  for (var i = 0; i < entries.length; i++) {
+    var portfolioEntry = entries[i];
+    var portfolioTitle = portfolioEntry.getTitle().getText();
+    PRINT('Portfolio ' + (i+1) + ': ' + portfolioTitle);
+  }
+};
+
+// FinanceService methods may be supplied with an alternate callback for errors
+var handleErrorCallback = function(error) {
+  PRINT(error);
+};
+
+PRINT('Retrieving a list of the user portfolios...');
+var portfolioFeedUri =
+  'https://finance.google.com/finance/feeds/default/portfolios';
+financeService.getPortfolioFeed(portfolioFeedUri,
+                                portfolioFeedCallback,
+                                handleErrorCallback);
+                                
+		</script>	
+	
+		<h3>After script within HTML body</h3>
+		
+		<textarea rows="1">[textarea]</textarea>
+	</body>
+</html>

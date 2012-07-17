@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+		
+		<title>Quotes</title>
+
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+		<script type="text/javascript" src="js/utils.js"></script>
+
+		<script type="text/javascript">
+			var xmlHttp
+			
+			// TODO: move to sep js file
+
+			function handleNewQuotes(responseText) {
+
+				document.getElementById("output").innerHTML = responseText ;
+
+				var lastQuote = "";
+				var symbol = "";
+				xmlDoc = $.parseXML( responseText );
+				$(xmlDoc).find("symbol").each(function() {
+					$.each(this.attributes, function(i, attrib){
+						symbol = attrib.value;
+					});
+				});
+			
+				$(xmlDoc).find("last").each(function() {
+					$.each(this.attributes, function(i, attrib){
+						lastQuote = attrib.value;
+					});
+				});
+			
+				appendTableRow("quotesTable", quoteRowMarkup(symbol, name));
+			}
+
+			/*
+			 * Refresh button's OnClick handler
+			 */
+			function refresh(str)
+			{
+				xmlHttp=GetXmlHttpObject()
+				if (xmlHttp==null)
+				{
+					alert ("Browser does not support HTTP Request")
+					return
+				}
+				
+				var url="http://www.google.com/ig/api?stock=qcom"
+				xmlHttp.onreadystatechange=stateChanged
+				xmlHttp.open("GET",url,true)
+				xmlHttp.send(null)
+			}
+			
+			/*
+			 * Callback handler for xmlHttp's OnReadyStateChange event
+			 */
+			function stateChanged() 
+			{
+				if (xmlHttp.readyState==4 || xmlHttp.readyState=="complete")
+				{
+					if (xmlHttp.responseText && 0 < xmlHttp.responseText.Length) {
+						handleNewQuotes( xmlHttp.responseText );
+					}
+					else {
+						$("#msgLog").append( $("#msgLog").Text + "EMPTY! xmlHttp.responseText" );
+//						$("EMPTY!").appendTo( $("#msgLog") );
+					}
+				}
+			}
+
+		</script>
+	</head>
+
+	<body>
+		<div id="wrap">
+
+		<span>
+			<input type="button" class="refresh" value="Refresh" onClick="refresh(this.value)" />
+			&nbsp;&nbsp;		
+			<input type="text" id="tickerSymbol" />
+			&nbsp;&nbsp;		
+			<input type="text" id="companyName"/>
+			<br />
+			<textarea name="recipients" id="output" rows="20" cols="25"></textarea>
+		</span>
+		
+		<span>
+			<textarea id="msgLog" rows="7"></textarea>
+		</span>
+		
+		<table id="quotesTable" border="1" >
+			<thead>
+				<tr>
+					<th>Ticker</th><th>Quote</th>
+				</tr>
+			</thead>
+		</table>
+		
+		</div>
+	</body>
+</html>
+
+
+
